@@ -17,10 +17,11 @@ export class AuthController {
         @Res() response : Response
     ) : Promise<Response> {
         try {
-            const { message } = await this.authService.signIn(signInDto);
+            const { message, token } = await this.authService.signIn(signInDto);
     
             return response.status(200).json({
-                message
+                message,
+                token
             });
         } catch (error) {
             if (error instanceof NotFoundError) {

@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
+import { TokenController } from "./token.controller";
+import { TokenService } from "./token.service";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule } from "@nestjs/config";
 
@@ -10,10 +10,10 @@ import { ConfigModule } from "@nestjs/config";
         ConfigModule
     ],
     controllers: [
-        AuthController
+        TokenController
     ],
     providers: [
-        AuthService
+        TokenService
     ]
 })
-export class AuthModule {}
+export class TokenModule {}
