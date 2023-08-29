@@ -19,3 +19,11 @@ model User {
   updatedAt DateTime?
   deletedAt DateTime?
 }
+
+model Unity {
+  id Int @id @default(autoincrement())
+  name String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+  deletedAt DateTime?
+}
