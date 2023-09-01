@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreateDto } from "./dto";
-import { CreateResponse } from "./interface";
+import { CreateDto, GetManyDto } from "./dto";
+import { CreateResponse, GetManyResponse } from "./interface";
+import { Unity } from "@prisma/client";
 
 @Injectable()
 export class UnityService {
@@ -22,6 +23,23 @@ export class UnityService {
             return {
                 message: "Unidade cadastrada com sucesso."
             };
+        } catch (error : any) {
+            throw error;
+        }
+    }
+
+    async getMany(getManyDto : GetManyDto) : Promise<GetManyResponse> {
+        try {
+            const unities : Unity[] = await this.prismaService.unity.findMany({
+                where: {
+                    ...(getManyDto.name !== "" ? { name: getManyDto.name } : undefined)
+                }
+            });
+
+            return {
+                message: "Unidades encontradas com sucesso.",
+                unities
+            }
         } catch (error : any) {
             throw error;
         }
