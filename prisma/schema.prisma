@@ -26,4 +26,31 @@ model Unity {
   createdAt DateTime @default(now())
   updatedAt DateTime?
   deletedAt DateTime?
+
+  requirements RequirementUnity[]
+}
+
+model Requirement {
+  id Int @id @default(autoincrement())
+  name String @unique
+  description String? @db.LongText
+  pointAmount Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+
+  unities RequirementUnity[]
+}
+
+model RequirementUnity {
+  id Int @id @default(autoincrement())
+  requirementId Int
+  unityId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+  deletedAt DateTime?
+
+  @@unique([requirementId, unityId])
+
+  requirement Requirement @relation(fields: [requirementId], references: [id])
+  unity Unity @relation(fields: [unityId], references: [id])
 }

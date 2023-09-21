@@ -3,13 +3,15 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { TokenModule } from './token/token.module';
 import { UnityModule } from './unity/unity.module';
+import { RequirementModule } from './requirement/requirement.module';
 
 @Module({
   imports: [
     AuthModule,
     PrismaModule,
     TokenModule,
-    UnityModule
+    UnityModule,
+    RequirementModule
   ],
   controllers: [],
   providers: []
