@@ -1,8 +1,8 @@
-import { Body, Controller, Post, Res } from "@nestjs/common";
+import { Body, Controller, Post, Res, Get, Query, InternalServerErrorException } from "@nestjs/common";
 import { RequirementService } from "./requirement.service";
 import { Response } from "express";
-import { CreateRequirementDto } from "./dto";
-import { CreateRequirementResponse } from "./interface";
+import { CreateRequirementDto, GetManyRequirementsDto } from "./dto";
+import { CreateRequirementResponse, GetManyRequirementsResponse } from "./interface";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 @Controller("requirements")
@@ -36,6 +36,32 @@ export class RequirementController {
 
             return response.status(500).json({
                 message: "Erro interno no servidor ao criar requisito.",
+                severityWarning: "error"
+            });
+        }
+    }
+
+    @Get("")
+    async getMany(
+        @Res() response: Response,
+        @Query() query: GetManyRequirementsDto
+    ): Promise<Response> {
+        try {
+            const getManyRequirementsResponse: GetManyRequirementsResponse = await this.requirementService.getMany(query);
+
+            return response.status(200).json({
+                ...getManyRequirementsResponse
+            });
+        } catch (error: any) {
+            if (error instanceof InternalServerErrorException) {
+                return response.status(500).json({
+                    message: error.message,
+                    severityWarning: "error"
+                });
+            }
+
+            return response.status(500).json({
+                message: "Erro interno no servidor ao buscar requisitos.",
                 severityWarning: "error"
             });
         }

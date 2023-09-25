@@ -1,7 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreateRequirementResponse } from "./interface";
-import { CreateRequirementDto } from "./dto";
+import { CreateRequirementResponse, GetManyRequirementsResponse } from "./interface";
+import { CreateRequirementDto, GetManyRequirementsDto } from "./dto";
+import { Requirement } from "@prisma/client";
 
 @Injectable()
 export class RequirementService {
@@ -24,6 +25,34 @@ export class RequirementService {
                 severityWarning: "success"
             }
         } catch (error) {
+            throw error;
+        }
+    }
+
+    async getMany(getManyRequirementsDto: GetManyRequirementsDto): Promise<GetManyRequirementsResponse> {
+        try {
+            const pointAmount: number = parseInt(getManyRequirementsDto.pointAmount);
+
+            const pointAmountValid: boolean = !isNaN(pointAmount) && pointAmount >= 0;
+
+            if (!pointAmountValid) {
+                throw new InternalServerErrorException("A quantidade de pontos do requisito deve ser um número maior ou igual a zero.");
+            }
+
+            const requirements: Requirement[] = await this.prismaService.requirement.findMany({
+                where: {
+                    ...(getManyRequirementsDto.name !== "" && { name: getManyRequirementsDto.name }),
+                    ...(getManyRequirementsDto.description !== "" && { description: getManyRequirementsDto.description }),
+                    ...(pointAmountValid && pointAmount !== 0 && { pointAmount: pointAmount })
+                }
+            });
+
+            return {
+                message: "Requisitos buscados com sucesso.",
+                severityWarning: "success",
+                requirements
+            }
+        } catch (error: any) {
             throw error;
         }
     }

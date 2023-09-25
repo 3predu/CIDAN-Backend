@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateDto, GetManyDto } from "./dto";
-import { CreateResponse, GetManyResponse } from "./interface";
+import { CreateResponse, GetByIdResponse, GetManyResponse } from "./interface";
 import { Unity } from "@prisma/client";
 
 @Injectable()
@@ -41,6 +41,32 @@ export class UnityService {
                 unities
             }
         } catch (error : any) {
+            throw error;
+        }
+    }
+
+    async getById(id: string) : Promise<GetByIdResponse> {
+        try {
+            const unityId: number = parseInt(id);
+
+            const validUnityId: boolean = !isNaN(unityId);
+
+            if (!validUnityId) {
+                throw new InternalServerErrorException("Id inválido.");
+            }
+
+            const unity: Unity = await this.prismaService.unity.findFirstOrThrow({
+                where: {
+                    id: unityId
+                }
+            });
+
+            return {
+                message: "Unidade buscada com sucesso.",
+                severityWarning: "success",
+                unity
+            }
+        } catch (error: any) {
             throw error;
         }
     }
