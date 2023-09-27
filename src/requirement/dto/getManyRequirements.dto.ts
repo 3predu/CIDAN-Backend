@@ -15,7 +15,7 @@ export class GetManyRequirementsDto {
     }, {
         message: "A quantidade de pontos do requisito deve ser um número."
     })
-    pointAmount: string;
+    maxPoint: string;
 
     @IsString({
         message: "A descrição do requisito deve ser uma string."

@@ -20,5 +20,5 @@ export class CreateRequirementDto {
     }, {
         message: "A quantidade de pontos deve ser um número."
     })
-    readonly pointAmount: number;
+    readonly maxPoint: number;
 }

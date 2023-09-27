@@ -1,10 +1,11 @@
-import { Body, Controller, Post, Res, Get, Query, Param, InternalServerErrorException } from "@nestjs/common";
+import { Body, Controller, Post, Res, Get, Query, Param, InternalServerErrorException, Put } from "@nestjs/common";
 
 import { UnityService } from "./unity.service";
 import { Response } from "express";
 import { CreateDto, GetManyDto } from "./dto";
 import { NotFoundError, PrismaClientKnownRequestError } from "@prisma/client/runtime";
-import { GetByIdResponse, GetManyResponse } from "./interface";
+import { GetByIdResponse, GetManyResponse, GetRequirementsResponse, SaveRequirementsResponse } from "./interface";
+import { SaveRequirementsDto } from "./dto/save-requirements.dto";
 
 @Controller("unity")
 export class UnityController {
@@ -52,6 +53,45 @@ export class UnityController {
         } catch (error: any) {
             return response.status(500).json({
                 message: "Erro ao buscar unidades."
+            });
+        }
+    }
+
+    @Get(":id/requirements")
+    async getRequirements(
+        @Res() response: Response,
+        @Param("id") id: string
+    ): Promise<Response> {
+        try {
+            const getRequriementsResponse: GetRequirementsResponse = await this.unityService.getRequirements(id);
+
+            return response.status(200).json({
+                ...getRequriementsResponse
+            });
+        } catch (error: any) {
+            return response.status(500).json({
+                message: "Erro ao buscar requisitos.",
+                severityWarning: "error"
+            });
+        }
+    }
+
+    @Put(":id/requirements")
+    async saveRequirements(
+        @Res() response: Response,
+        @Body() saveRequirementsDto: SaveRequirementsDto,
+        @Param("id") id: string
+    ): Promise<Response> {
+        try {
+            const saveRequirementsResponse: SaveRequirementsResponse = await this.unityService.saveRequirements(id, saveRequirementsDto);
+
+            return response.status(200).json({
+                ...saveRequirementsResponse
+            });
+        } catch (error: any) {
+            return response.status(500).json({
+                message: "Erro ao salvar requisitos.",
+                severityWarning: "error"
             });
         }
     }

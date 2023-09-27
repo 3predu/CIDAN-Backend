@@ -34,7 +34,7 @@ model Requirement {
   id Int @id @default(autoincrement())
   name String @unique
   description String? @db.LongText
-  pointAmount Int?
+  maxPoint Int
   createdAt DateTime @default(now())
   updatedAt DateTime?
 
@@ -45,6 +45,7 @@ model RequirementUnity {
   id Int @id @default(autoincrement())
   requirementId Int
   unityId Int
+  point Int
   createdAt DateTime @default(now())
   updatedAt DateTime?
   deletedAt DateTime?

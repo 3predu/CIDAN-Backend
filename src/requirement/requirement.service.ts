@@ -16,7 +16,7 @@ export class RequirementService {
                 data: {
                     name: createRequirementDto.name,
                     ...(createRequirementDto.description !== "" && { description: createRequirementDto.description }),
-                    ...(createRequirementDto.pointAmount !== 0 && { pointAmount: createRequirementDto.pointAmount })
+                    ...(createRequirementDto.maxPoint !== 0 && { maxPoint: createRequirementDto.maxPoint })
                 }
             });
 
@@ -31,11 +31,11 @@ export class RequirementService {
 
     async getMany(getManyRequirementsDto: GetManyRequirementsDto): Promise<GetManyRequirementsResponse> {
         try {
-            const pointAmount: number = parseInt(getManyRequirementsDto.pointAmount);
+            const maxPoint: number = parseInt(getManyRequirementsDto.maxPoint);
 
-            const pointAmountValid: boolean = !isNaN(pointAmount) && pointAmount >= 0;
+            const maxPointValid: boolean = !isNaN(maxPoint) && maxPoint >= 0;
 
-            if (!pointAmountValid) {
+            if (!maxPointValid) {
                 throw new InternalServerErrorException("A quantidade de pontos do requisito deve ser um número maior ou igual a zero.");
             }
 
@@ -43,7 +43,7 @@ export class RequirementService {
                 where: {
                     ...(getManyRequirementsDto.name !== "" && { name: getManyRequirementsDto.name }),
                     ...(getManyRequirementsDto.description !== "" && { description: getManyRequirementsDto.description }),
-                    ...(pointAmountValid && pointAmount !== 0 && { pointAmount: pointAmount })
+                    ...(maxPointValid && maxPoint !== 0 && { maxPoint: maxPoint })
                 }
             });
 
