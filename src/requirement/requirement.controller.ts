@@ -1,9 +1,9 @@
-import { Body, Controller, Post, Res, Get, Query, InternalServerErrorException } from "@nestjs/common";
+import { Body, Controller, Post, Res, Get, Query, InternalServerErrorException, Delete, Param } from "@nestjs/common";
 import { RequirementService } from "./requirement.service";
 import { Response } from "express";
 import { CreateRequirementDto, GetManyRequirementsDto } from "./dto";
-import { CreateRequirementResponse, GetManyRequirementsResponse } from "./interface";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import { CreateRequirementResponse, DeleteRequirementResponse, GetManyRequirementsResponse } from "./interface";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 
 @Controller("requirements")
 export class RequirementController {
@@ -62,6 +62,34 @@ export class RequirementController {
 
             return response.status(500).json({
                 message: "Erro interno no servidor ao buscar requisitos.",
+                severityWarning: "error"
+            });
+        }
+    }
+
+    @Delete(":id")
+    async delete(
+        @Res() response: Response,
+        @Param("id") id: string
+    ): Promise<Response> {
+        try {
+            const deleteRequirementResponse: DeleteRequirementResponse = await this.requirementService.delete(id);
+
+            return response.status(200).json({
+                ...deleteRequirementResponse
+            });
+        } catch (error: any) {
+            console.log(error);
+
+            if (error instanceof InternalServerErrorException) {
+                return response.status(500).json({
+                    message: error.message,
+                    severityWarning: "error"
+                });
+            }
+
+            return response.status(500).json({
+                message: "Erro interno no servidor ao deletar requisito.",
                 severityWarning: "error"
             });
         }

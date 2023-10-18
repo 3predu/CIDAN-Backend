@@ -52,6 +52,6 @@ model RequirementUnity {
 
   @@unique([requirementId, unityId])
 
-  requirement Requirement @relation(fields: [requirementId], references: [id])
-  unity Unity @relation(fields: [unityId], references: [id])
+  requirement Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  unity Unity @relation(fields: [unityId], references: [id], onDelete: Cascade)
 }

@@ -3,7 +3,7 @@ import { Body, Controller, Post, Res, Get, Query, Param, InternalServerErrorExce
 import { UnityService } from "./unity.service";
 import { Response } from "express";
 import { CreateDto, GetManyDto } from "./dto";
-import { NotFoundError, PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { GetByIdResponse, GetManyResponse, GetRequirementsResponse, SaveRequirementsResponse } from "./interface";
 import { SaveRequirementsDto } from "./dto/save-requirements.dto";
 
@@ -115,11 +115,13 @@ export class UnityController {
                     message: error.message,
                     severityWarning: "error"
                 });
-            } else if (error instanceof NotFoundError) {
-                return response.status(404).json({
-                    message: "Unidade não encontrada.",
-                    severityWarning: "warning"
-                });
+            } else if (error instanceof PrismaClientKnownRequestError) {
+                if (error.code === "P2025") {
+                    return response.status(404).json({
+                        message: "Unidade não encontrada.",
+                        severityWarning: "warning"
+                    });
+                }
             }
 
             return response.status(500).json({

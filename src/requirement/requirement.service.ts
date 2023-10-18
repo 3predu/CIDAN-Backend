@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreateRequirementResponse, GetManyRequirementsResponse } from "./interface";
+import { CreateRequirementResponse, DeleteRequirementResponse, GetManyRequirementsResponse } from "./interface";
 import { CreateRequirementDto, GetManyRequirementsDto } from "./dto";
 import { Requirement } from "@prisma/client";
 
@@ -51,6 +51,31 @@ export class RequirementService {
                 message: "Requisitos buscados com sucesso.",
                 severityWarning: "success",
                 requirements
+            }
+        } catch (error: any) {
+            throw error;
+        }
+    }
+
+    async delete(id: string): Promise<DeleteRequirementResponse> {
+        try {
+            const requirementId: number = parseInt(id);
+
+            const requrementIdValid: boolean = !isNaN(requirementId) && requirementId > 0;
+
+            if (!requrementIdValid) {
+                throw new InternalServerErrorException("O id do requisito deve ser um número maior que zero.");
+            }
+
+            await this.prismaService.requirement.delete({
+                where: {
+                    id: requirementId
+                }
+            });
+
+            return {
+                message: "Requisito deletado com sucesso.",
+                severityWarning: "success"
             }
         } catch (error: any) {
             throw error;
